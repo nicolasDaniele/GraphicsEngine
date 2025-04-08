@@ -3,7 +3,6 @@
 #include <iostream>
 #include "ShaderLoader.h"
 #include "Camera.h"
-#include "LightRenderer.h"
 #include "MeshRenderer.h"
 #include "TextureLoader.h"
 #include "Utils.h"
@@ -12,9 +11,8 @@ const int WIDTH = 800;
 const int HEIGHT = 600;
 
 Camera* camera;
-LightRenderer* light;
-MeshRenderer* mesh;
-ShaderLoader shader;
+MeshRenderer* meshRenderer;
+ShaderLoader shaderLoader;
 
 float lastMouseXPos = WIDTH / 2.0f;
 float lastMouseYPos = HEIGHT / 2.0f;
@@ -58,10 +56,7 @@ int main(int argc, char** argv)
 		lastFrame = currentFrame;
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera->GetZoomAmount()), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
-		//shader.setMat4("projection", projection);
-
 		glm::mat4 view = camera->GetViewMatrix();
-		//shader.setMat4("view", view);
 
 		RenderScene();
 		glfwSwapBuffers(window);
@@ -72,7 +67,6 @@ int main(int argc, char** argv)
 	glfwTerminate();
 
 	delete camera;
-	delete light;
 
 	return 0;
 }
@@ -81,36 +75,31 @@ void InitGame()
 {
 	glEnable(GL_DEPTH_TEST);
  
-	GLuint flatShaderProgram = shader.CreateProgram("Assets/Shaders/FlatModel.vs",
+	GLuint shaderProgram = shaderLoader.CreateProgram("Assets/Shaders/FlatModel.vs",
 			"Assets/Shaders/FlatModel.fs");
 
-	GLuint texturedShaderProgram =
-		shader.CreateProgram("Assets/Shaders/TexturedModel.vs",
-			"Assets/Shaders/TexturedModel.fs");
+	/*GLuint shaderProgram = shader.CreateProgram("Assets/Shaders/TexturedModel.vs",
+			"Assets/Shaders/TexturedModel.fs");*/
 
-	camera = new Camera(45.0f, WIDTH, HEIGHT, 0.1f, 100.0f, glm::vec3(0.0f, 0.0f, 6.0f));
+	camera = new Camera(45.0f, WIDTH, HEIGHT, 0.1f, 100.0f, glm::vec3(0.0f, 0.0f, 3.0f));
 
-	light = new LightRenderer(MeshType::MT_Triangle, camera);
-	light->SetProgram(flatShaderProgram);
-	light->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	/*TextureLoader tLoader;
+	GLuint texture = tLoader.GetTextureID("Assets/Textures/wood.jpg");*/
 
-	TextureLoader tLoader;
-	GLuint texture = tLoader.GetTextureID("Assets/Textures/arcade.png");
-
-	mesh = new MeshRenderer(MeshType::MT_Cube, camera);
-	mesh->SetProgram(texturedShaderProgram);
-	mesh->SetTexture(texture);
-	mesh->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-	mesh->SetScale(glm::vec3(1.0f));
+	meshRenderer = new MeshRenderer(MeshType::SPHERE, camera);
+	meshRenderer->SetProgram(shaderProgram);
+	//mesh->SetTexture(texture);
+	meshRenderer->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	meshRenderer->SetScale(glm::vec3(1.0f));
 }
 
 void RenderScene() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(1.0, 1.0, 0.0, 1.0);
+	glClearColor(0.1f, 0.0f, 0.12f, 1.0f);
 
-	if(mesh)
-		mesh->Draw();
+	if(meshRenderer)
+		meshRenderer->Draw();
 }
 
 void HandleInput(GLFWwindow* window)
@@ -121,9 +110,9 @@ void HandleInput(GLFWwindow* window)
 	if (camera)
 	{
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			camera->MoveCamera(Utils::Direction::FORWARD, deltaTime);
+			camera->MoveCamera(Utils::Direction::UP, deltaTime);
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			camera->MoveCamera(Utils::Direction::BACKWARD, deltaTime);
+			camera->MoveCamera(Utils::Direction::DOWN, deltaTime);
 		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 			camera->MoveCamera(Utils::Direction::LEFT, deltaTime);
 		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
