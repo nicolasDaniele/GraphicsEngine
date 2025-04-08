@@ -33,9 +33,7 @@ GLuint TextureLoader::GetTextureID(std::string texFileName)
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
-	{
 		std::cout << "Failed to load texture" << std::endl;
-	}
 	
 	glBindTexture(GL_TEXTURE_2D, 0);
 	stbi_image_free(image);
