@@ -3,11 +3,17 @@
 #include <vector>
 #include "Libraries/glm/glm/glm.hpp"
 
+const float PI = 3.141592f;
+const float SPHERE_RADIUS = 1.0f;
+const int SECTOR_COUNT = 36;
+const int STACK_COUNT = 18;
+
 enum MeshType {
-	MT_Triangle = 0,
-	MT_Quad = 1,
-	MT_Cube = 2,
-	MT_Sphere = 3
+	NONE			= 0,
+	TRIANGLE		= 1,
+	QUAD			= 2,
+	CUBE			= 3,
+	SPHERE			= 4
 };
 
 struct Vertex {
