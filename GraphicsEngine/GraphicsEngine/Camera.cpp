@@ -24,14 +24,23 @@ void Camera::MoveCamera(Utils::Direction direction, float deltaTime)
 {
 	float velocity = movementSpeed * deltaTime;
 
-	if (direction == Utils::Direction::FORWARD)
-		position += forward * velocity;
-	if (direction == Utils::Direction::BACKWARD)
-		position -= forward * velocity;
-	if (direction == Utils::Direction::LEFT)
-		position -= right * velocity;
-	if (direction == Utils::Direction::RIGHT)
-		position += right * velocity;
+	switch (direction)
+	{
+	case Utils::FORWARD:
+		position += forward * velocity; break;
+	case Utils::BACKWARD:
+		position -= forward * velocity; break;
+	case Utils::UP:
+		position += up * velocity; break;
+	case Utils::DOWN:
+		position -= up * velocity; break;
+	case Utils::LEFT:
+		position -= right * velocity; break;
+	case Utils::RIGHT:
+		position += right * velocity; break;
+	default:
+		break;
+	}
 }
 
 void Camera::RotateCamera(float xOffset, float yOffset, GLboolean constrainPitch)
