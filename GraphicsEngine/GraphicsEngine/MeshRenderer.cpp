@@ -9,13 +9,13 @@ MeshRenderer::MeshRenderer(MeshType modelType, Camera* _camera)
 
 	switch (modelType)
 	{
-	case MT_Triangle: Mesh::SetTriangleData(vertices, indices);
+	case TRIANGLE: Mesh::SetTriangleData(vertices, indices);
 		break;
-	case MT_Quad: Mesh::SetQuadData(vertices, indices);
+	case QUAD: Mesh::SetQuadData(vertices, indices);
 		break;
-	case MT_Cube: Mesh::SetCubeData(vertices, indices);
+	case CUBE: Mesh::SetCubeData(vertices, indices);
 		break;
-	case MT_Sphere: Mesh::SetSphereData(vertices, indices);
+	case SPHERE: Mesh::SetSphereData(vertices, indices);
 		break;
 	}
 
@@ -25,16 +25,23 @@ MeshRenderer::MeshRenderer(MeshType modelType, Camera* _camera)
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(),	&vertices[0], GL_STATIC_DRAW);
-	
+
 	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) *	indices.size(), &indices[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+	
+	// Enable Color
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+		(void*)(offsetof(Vertex, Vertex::color)));
+
+	// Enable TexCoord
+	/*glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+		(void*)(offsetof(Vertex, Vertex::texCoords)));*/
+
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-		(void*)(offsetof(Vertex, Vertex::texCoords)));
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
